@@ -4,38 +4,47 @@
  */
 package vistas;
 
-
+import javax.swing.JOptionPane;
 import DAO.MascotasDAO;
 import DAO.PropietarioDAO;
 import controladores.ControladorMascota;
 import controladores.ControladorPropietario;
-import javax.swing.JOptionPane;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import modelo.Mascotas;
 import modelo.Propietario;
-import vistas.VentanaTablas;
 
-/**
- *
- * @author Jean Pool
- */
 public class Gestion_De_Registro extends javax.swing.JInternalFrame {
-    
-    private MascotasDAO DaoMascota;
-    private PropietarioDAO DaoPropietario;
-    private ControladorPropietario propietarioControlador = new ControladorPropietario();
-    private ControladorMascota mascotaControlador = new ControladorMascota();
+
   
+    private final ControladorMascota mascotaControlador;
+    private final ControladorPropietario propietarioControlador;
+    private VentanaTablas ventanaTablas;
 
+    // Constructor modificado para recibir controladores
+    public Gestion_De_Registro(ControladorMascota mascotaCtrl, ControladorPropietario propietarioCtrl) {
+        this.mascotaControlador = mascotaCtrl;
+        this.propietarioControlador = propietarioCtrl;
+        this.ventanaTablas = null; // será asignada por Taller_5 al mostrar tablas si es necesario
 
-    public Gestion_De_Registro() {
-    initComponents();
-    //ListarTabla();
-    
-        
+        initComponents();
     }
-    
-    
+
+    public void setVentanaTablas(VentanaTablas vt) {
+        this.ventanaTablas = vt;
+    }
+
+    private void limpiarCampos() {
+        txtID.setText("");
+        txtNombre.setText("");
+        boxEspecie.setSelectedIndex(0);
+        txtEdad.setText("");
+        txtDocumento.setText("");
+        txtNomPropietario.setText("");
+        txtDocPropietario.setText("");
+        txtTelefono.setText("");
+    }
+
     /**
      * 
      * 
@@ -56,7 +65,6 @@ public class Gestion_De_Registro extends javax.swing.JInternalFrame {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         txtID = new javax.swing.JTextField();
-        boxEspecie = new javax.swing.JComboBox<>();
         txtEdad = new javax.swing.JTextField();
         txtDocumento = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
@@ -69,6 +77,7 @@ public class Gestion_De_Registro extends javax.swing.JInternalFrame {
         btnPropietario = new javax.swing.JButton();
         txtDocPropietario = new javax.swing.JTextField();
         txtTelefono = new javax.swing.JTextField();
+        boxEspecie = new javax.swing.JComboBox<>();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Registro de Usuario", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
         setClosable(true);
@@ -91,13 +100,6 @@ public class Gestion_De_Registro extends javax.swing.JInternalFrame {
         jLabel8.setText("Edad:");
 
         jLabel9.setText("Doc Propietario:");
-
-        boxEspecie.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione tipo de especie", "Perro", "Gato" }));
-        boxEspecie.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                boxEspecieActionPerformed(evt);
-            }
-        });
 
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
@@ -122,6 +124,8 @@ public class Gestion_De_Registro extends javax.swing.JInternalFrame {
             }
         });
 
+        boxEspecie.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione Una Especie", "Perro", "Gato" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -143,17 +147,17 @@ public class Gestion_De_Registro extends javax.swing.JInternalFrame {
                                     .addComponent(jLabel8))
                                 .addGap(43, 43, 43)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(txtNombre, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtNombre, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
                                     .addComponent(txtID)
                                     .addComponent(txtEdad, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtDocumento, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(boxEspecie, javax.swing.GroupLayout.Alignment.LEADING, 0, 169, Short.MAX_VALUE)))
+                                    .addComponent(boxEspecie, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jLabel1)))
                         .addGap(18, 18, 18)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                .addGap(60, 60, 60)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addGroup(layout.createSequentialGroup()
@@ -170,7 +174,7 @@ public class Gestion_De_Registro extends javax.swing.JInternalFrame {
                             .addComponent(btnPropietario, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtDocPropietario)
                             .addComponent(txtTelefono, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE))))
-                .addContainerGap(90, Short.MAX_VALUE))
+                .addContainerGap(48, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -228,94 +232,73 @@ public class Gestion_De_Registro extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        String nombre = txtNombre.getText().trim();
-        String especie = boxEspecie.getSelectedItem()!= null ? boxEspecie.getSelectedItem().toString() : "";
-        
-        int id = Integer.parseInt(txtID.getText().trim());
-        int edad = Integer.parseInt(txtEdad.getText().trim());
-        String documento = txtDocumento.getText().trim();
-        
-         if (nombre == null || nombre.isBlank() ||
-    especie == null || especie.isBlank() ||
-    documento == null || documento.isBlank())  {
-        JOptionPane.showMessageDialog(this, "Todos los campos deben estar llenos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        return;
-    } else if (id <= 0 || edad <= 0 ) {
-        JOptionPane.showMessageDialog(this, "No se pueden agregar datos con valores negativos", "Advertencia", JOptionPane.WARNING_MESSAGE);
+         try {
+            String nombre = txtNombre.getText().trim();
+            String especie = boxEspecie.getSelectedItem().toString();
+            String documento = txtDocumento.getText().trim();
 
-    }
+            if (nombre.isEmpty() || especie.isEmpty() || documento.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Todos los campos deben estar llenos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-    Propietario prop = propietarioControlador.buscarPropietario(documento);
-    if (prop == null){
-        JOptionPane.showMessageDialog(this, " propietario no encontrado, porfavor registrar un propietario primero", "ERROR", JOptionPane.ERROR_MESSAGE );  
-        return;
-    } 
-    Mascotas nuevaMascota = new Mascotas(nombre, especie, edad, id);
-    nuevaMascota.setDocumentoProp(documento);  
+            int id = Integer.parseInt(txtID.getText().trim());
+            int edad = Integer.parseInt(txtEdad.getText().trim());
+
+            Propietario prop = propietarioControlador.buscarPropietario(documento);
+            if (prop == null) {
+                JOptionPane.showMessageDialog(this, "Propietario no encontrado. Registre un propietario primero.", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Mascotas nuevaMascota = new Mascotas(nombre, especie, edad, id);
+            nuevaMascota.setDocumentoProp(documento);
+
+            boolean confirmacion = mascotaControlador.guardarMascota(nuevaMascota);
+
+            if (confirmacion) {
+                JOptionPane.showMessageDialog(this, "La mascota fue guardada correctamente", "Confirmación", JOptionPane.INFORMATION_MESSAGE);
+
+                if (ventanaTablas != null) {
+                    ventanaTablas.ListarMascota();
+                }
+
+                limpiarCampos();
+            } else {
+                JOptionPane.showMessageDialog(this, "La mascota no se pudo guardar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            }
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "ID y Edad deben ser números válidos.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     
-    boolean confirmacion = mascotaControlador.guardarMascota(nuevaMascota);
+
     
-    if (confirmacion){
-        JOptionPane.showMessageDialog(this, "La mascota fue guardada correctamente", "Confirmacion", JOptionPane.INFORMATION_MESSAGE);
-        //listarMascotas();
-        txtID.setText("");
-        txtNombre.setText("");
-        boxEspecie.removeAllItems();
-        txtEdad.setText("");
-        txtDocumento.setText("");
-    }else{
-        JOptionPane.showMessageDialog(this, "La mascota no se pudo guardar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-
-    }
-        JOptionPane.showMessageDialog(this, "Paciente registrado correctamente");
-
-        // Limpiar campos
-
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
-    
     private void btnPropietarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPropietarioActionPerformed
-        
+    String documento = txtDocPropietario.getText().trim();
+        String nombreProp = txtNomPropietario.getText().trim();
+        String telefono = txtTelefono.getText().trim();
 
-    String documento = txtDocumento.getText().trim();
-    String nombreProp = txtNomPropietario.getText().trim();
-    String telefono = txtTelefono.getText().trim();
+        if (documento.isBlank() || nombreProp.isBlank() || telefono.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos deben estar llenos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-    if (documento == null || documento.isBlank() || nombreProp == null || 
-        nombreProp.isBlank() || telefono == null || telefono.isBlank()){
-    JOptionPane.showMessageDialog(this, "Todos los campos deben estar llenos.", "Advertencia", JOptionPane.WARNING_MESSAGE);    
-    return;
-    } else if (documento.length() < 5 ){
-    JOptionPane.showMessageDialog(this, " La cantidad de caracteres ingresados en documento no son validos.", "Advertencia", JOptionPane.WARNING_MESSAGE);    
-    return ;
-    } else if (telefono.length() < 5){
-         JOptionPane.showMessageDialog(this, " La cantidad de caracteres ingresados en telefono no son validos.", "Advertencia", JOptionPane.WARNING_MESSAGE);    
-       return;
-    }
+        Propietario nuevoProp = new Propietario(nombreProp, documento, telefono);
+        boolean confirmacion = propietarioControlador.guardarPropietario(nuevoProp);
 
-    Propietario nuevoProp = new Propietario(nombreProp, documento, telefono);
-    boolean confirmacion = propietarioControlador.guardarPropietario(nuevoProp);
-
-    if(confirmacion){
-    JOptionPane.showMessageDialog(this, " El registro fue exitoso.", "Confirmacion", JOptionPane.INFORMATION_MESSAGE);
-    //Limpiar Campos
-        txtNomPropietario.setText("");
-        txtDocumento.setText("");
-        txtTelefono.setText("");
-   // ListarPropietario();
-    } else {
-    JOptionPane.showMessageDialog(this, "El registro no se pudo completar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-
-    }
+        if (confirmacion) {
+            JOptionPane.showMessageDialog(this, " El registro fue exitoso.", "Confirmacion", JOptionPane.INFORMATION_MESSAGE);
+            if (ventanaTablas != null) {
+                ventanaTablas.ListarPropietario();
+            }
+            limpiarCampos();
+        } else {
+            JOptionPane.showMessageDialog(this, "El registro no se pudo completar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_btnPropietarioActionPerformed
-
-    private void boxEspecieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boxEspecieActionPerformed
-        boxEspecie.removeAllItems(); // limpia 
-
-    boxEspecie.addItem("Perro");
-    boxEspecie.addItem("Gato");
-
-    }//GEN-LAST:event_boxEspecieActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

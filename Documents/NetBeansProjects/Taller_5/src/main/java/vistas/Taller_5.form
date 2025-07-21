@@ -245,6 +245,7 @@
               <SubComponents>
                 <Component class="javax.swing.JTextPane" name="jTextPane1">
                   <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="text" type="java.lang.String" value="                             &#xa;&#xa;                Donde la salud animal se encuentra con la tecnolog&#xed;a&#xa;&#xa;&#xa;Sistema de Gesti&#xf3;n Cl&#xed;nica Veterinaria&#xa;Versi&#xf3;n 1.0 &#x2013; Proyecto Acad&#xe9;mico&#xa;&#xa;Desarrollado por:&#xa;Jean Pool Alejandro Tapiero S&#xe1;nchez&#xa;Estudiante de Ingenier&#xed;a de Software&#xa;Escuela de Administraci&#xf3;n y Mercadotecnia del Quind&#xed;o &#x2013; EAM"/>
                   </Properties>
                 </Component>

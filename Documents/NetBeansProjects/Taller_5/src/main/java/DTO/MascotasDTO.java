@@ -19,6 +19,7 @@ public class MascotasDTO {
     private String documentoPropietario;
 
     public MascotasDTO() {
+        
         setNombre(nombre);
         setEspecie(especie);
         setEdad(edad);

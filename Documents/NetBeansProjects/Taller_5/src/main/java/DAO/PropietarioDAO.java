@@ -5,6 +5,7 @@
 package DAO;
 
 import java.util.ArrayList;
+import java.util.List;
 import modelo.Propietario;
 
 /**
@@ -12,24 +13,36 @@ import modelo.Propietario;
  * @author Jean Pool
  */
 public class PropietarioDAO {
-    
-    private ArrayList<Propietario> listPropietario = new ArrayList<>();
+    private List<Propietario> listaPropietarios;
 
     public PropietarioDAO() {
+        listaPropietarios = new ArrayList<>();
     }
-    
-     public boolean guardarPropietario(Propietario propietario) {
-        for (Propietario p : listPropietario) {
+
+    // Agregar propietario
+    public boolean agregarPropietario(Propietario propietario) {
+        if (propietario == null) {
+            return false;
+        }
+
+        // Validar que el documento no se repita
+        for (Propietario p : listaPropietarios) {
             if (p.getDocumento().equals(propietario.getDocumento())) {
-                return false; // Ya existe
+                return false; // Documento ya existe
             }
         }
-        listPropietario.add(propietario);
+        listaPropietarios.add(propietario);
         return true;
     }
 
-    public Propietario buscarPropietario(String documento) {
-        for (Propietario p : listPropietario) {
+    // Obtener todos los propietarios
+    public List<Propietario> obtenerPropietarios() {
+        return new ArrayList<>(listaPropietarios);
+    }
+
+    // Buscar propietario por documento
+    public Propietario buscarPorDocumento(String documento) {
+        for (Propietario p : listaPropietarios) {
             if (p.getDocumento().equals(documento)) {
                 return p;
             }
@@ -37,26 +50,13 @@ public class PropietarioDAO {
         return null;
     }
 
+    // Eliminar propietario por documento
     public boolean eliminarPropietario(String documento) {
-        Propietario p = buscarPropietario(documento);
-        if (p != null) {
-            listPropietario.remove(p);
+        Propietario prop = buscarPorDocumento(documento);
+        if (prop != null) {
+            listaPropietarios.remove(prop);
             return true;
         }
         return false;
     }
-
-    public boolean editarPropietario(String documento, Propietario Propietario) {
-        for (Propietario p : listPropietario) {
-            if (p.getDocumento().equals(documento)) {
-                p.setNombre(Propietario.getNombre());
-                p.setTelefono(Propietario.getTelefono());
-                return true;
-            }
-        }
-        return false;
-    }
-      public ArrayList<Propietario> obtenerTodos() {
-        return new ArrayList<>(listPropietario);
-      }
 }

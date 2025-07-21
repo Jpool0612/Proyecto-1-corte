@@ -6,6 +6,7 @@ package controladores;
 
 import DAO.PropietarioDAO;
 import java.util.ArrayList;
+import java.util.List;
 import modelo.Propietario;
 
 /**
@@ -13,51 +14,43 @@ import modelo.Propietario;
  * @author Jean Pool
  */
 public class ControladorPropietario {
-       private PropietarioDAO dao;
+      
+    private PropietarioDAO daoPropietario;
 
     public ControladorPropietario() {
-        this.dao = new PropietarioDAO();
+        daoPropietario = new PropietarioDAO();
     }
 
     public boolean guardarPropietario(Propietario propietario) {
-        // Validar que los campos no estén vacíos y tengan longitud adecuada
-        if ((propietario.getNombre() == null || propietario.getNombre().isBlank()) ||
-            (propietario.getDocumento() == null || propietario.getDocumento().length() < 5) ||
-            (propietario.getTelefono() == null || propietario.getTelefono().length() < 5)) {
+        if (propietario == null) {
             return false;
         }
-        return dao.guardarPropietario(propietario);
+        return daoPropietario.agregarPropietario(propietario);
+    }
+
+    public List<Propietario> listarPropietarios() {
+        return daoPropietario.obtenerPropietarios();
     }
 
     public Propietario buscarPropietario(String documento) {
-        // Validar que el documento no esté vacío
-        if (documento == null || documento.isBlank()) {
-            return null;
-        }
-        return dao.buscarPropietario(documento);
-    }
-
-    public boolean editarPropietario(String documentoActual, String nuevoNombre, String nuevoTelefono) {
-        // Validar datos nuevos y actuales
-        if ((documentoActual == null || documentoActual.isBlank()) ||
-            (nuevoNombre == null || nuevoNombre.isBlank()) ||
-            (nuevoTelefono == null || nuevoTelefono.length() < 7)) {
-            return false;
-        }
-
-        Propietario actualizado = new Propietario(nuevoNombre, documentoActual, nuevoTelefono);
-        return dao.editarPropietario(documentoActual, actualizado);
+        return daoPropietario.buscarPorDocumento(documento);
     }
 
     public boolean eliminarPropietario(String documento) {
-        // Validar documento antes de eliminar
-        if (documento == null || documento.isBlank()) {
-            return false;
-        }
-        return dao.eliminarPropietario(documento);
+        return daoPropietario.eliminarPropietario(documento);
     }
     
-    public ArrayList<Propietario> obtenerPropietarios(){
-        return dao.obtenerTodos();
+
+    private List<Propietario> listaPropietarios = new ArrayList<>(); // Lista principal
+
+    public boolean editarPropietario(Propietario propietarioEditado) {
+        for (int i = 0; i < listaPropietarios.size(); i++) {
+            Propietario p = listaPropietarios.get(i);
+            if (p.getDocumento().equals(propietarioEditado.getDocumento())) {
+                listaPropietarios.set(i, propietarioEditado); // Reemplaza con los datos nuevos
+                return true;
+            }
+        }
+        return false;
     }
 }

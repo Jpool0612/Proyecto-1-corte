@@ -9,31 +9,16 @@ public class Mascotas {
     private String nombre;
     private String especie;
     private int edad;
-    // private ArrayList<Consulta> consultas;
-    // ✅ Refactor: delegar a clase Historial
     private Historial historial;
     private String documentoPropietario;
 
     public Mascotas(String nombre, String especie, int edad, int Id) {
-        /*this.nombre = nombre;
-        this.especie = especie;
-        this.edad = edad;
-        this.consultas = new ArrayList<>();*/
-        // ✅ Refactor: usar setters + historial
         setNombre(nombre);
         setEspecie(especie);
         setEdad(edad);
         setId(Id);
         this.historial = new Historial();
     }
-
-//    public String getDocumentoPropietario() {
-//        return documentoPropietario;
-//    }
-//
-//    public void setDocumentoPropietario(String documentoPropietario) {
-//        this.documentoPropietario = documentoPropietario;
-//    }
 
     public int getId() {
         return Id;
@@ -44,25 +29,15 @@ public class Mascotas {
     }
 
     public void agregarConsulta(Consulta consulta) {
-        // consultas.add(consulta);
-        historial.agregarConsulta(consulta); // ✅ delegar
+        historial.agregarConsulta(consulta); 
     }
 
     public void mostrarHistorial() {
         System.out.println("Mascota: " + nombre + " | Especie: " + especie + " | Edad: " + edad + " años");
         System.out.println("Historial de consultas:");
-        /*if (consultas.isEmpty()) {
-            System.out.println("Sin consultas registradas.");
-        } else {
-            for (Consulta c : consultas) {
-                c.mostrarConsulta();
-                System.out.println("--------------------------");
-            }
-        }*/
-        historial.mostrarConsultas(); // ✅ nuevo método
+        historial.mostrarConsultas(); 
     }
-
-    // ✅ Nuevos setters con validación
+    
     public void setNombre(String nombre) {
         if (nombre == null || nombre.isBlank()) {
             throw new IllegalArgumentException("Nombre inválido.");
@@ -107,5 +82,5 @@ public class Mascotas {
     }
 
 
-    // ❌ No se expone historial directamente
+    
 }

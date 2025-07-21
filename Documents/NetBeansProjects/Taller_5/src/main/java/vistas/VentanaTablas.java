@@ -1,47 +1,66 @@
 package vistas;
 
-import controladores.ControladorMascota;
-import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
+import controladores.ControladorMascota;
+import controladores.ControladorPropietario;
 import modelo.Mascotas;
+import modelo.Propietario;
+import java.util.List;
+import javax.swing.JOptionPane;
 
 public class VentanaTablas extends javax.swing.JInternalFrame {
-   private ControladorMascota mascotaControlador = new ControladorMascota();
-    private DefaultTableModel modelo;
 
-    // ✅ Constructor 1: Recibe un modelo (para compartir con otras ventanas)
-    public VentanaTablas(DefaultTableModel modelo) {
+    private ControladorMascota mascotaControlador = new ControladorMascota();
+    private ControladorPropietario propietarioControlador = new ControladorPropietario();
+    
+
+    private DefaultTableModel modeloMascotas;
+    private DefaultTableModel modeloPropietarios;
+
+    public VentanaTablas(ControladorMascota mascotaCtrl, ControladorPropietario propietarioCtrl) {
+        this.mascotaControlador = mascotaCtrl;
+        this.propietarioControlador = propietarioCtrl;
         initComponents();
-        this.modelo = modelo;
-        tablaPacientes.setModel(modelo);
+        configurarModelos();
         ListarMascota();
+        ListarPropietario();
     }
 
-    // ✅ Constructor 2: Sin parámetros (crea su propio modelo)
-    public VentanaTablas() {
-        initComponents();
-        modelo = new DefaultTableModel(
-            new Object[]{"ID", "Nombre", "Especie", "Edad", "Documento Propietario"}, 0
-        );
-        tablaPacientes.setModel(modelo);
-        ListarMascota();
+    private void configurarModelos() {
+        modeloMascotas = new DefaultTableModel(new String[]{
+            "ID", "Nombre", "Especie", "Edad", "Documento Propietario"
+        }, 0);
+        tablaMascotas.setModel(modeloMascotas);
+
+        modeloPropietarios = new DefaultTableModel(new String[]{
+            "Nombre", "Documento", "Teléfono"
+        }, 0);
+        tablaPropietarios.setModel(modeloPropietarios);
     }
 
-    // ✅ Método para llenar la tabla con las mascotas registradas
     public void ListarMascota() {
-        modelo.setRowCount(0); // Limpia la tabla
-        ArrayList<Mascotas> lista = mascotaControlador.obtenerTodasMascotas();
+        modeloMascotas.setRowCount(0); // Limpia la tabla
+        List<Mascotas> lista = mascotaControlador.listarMascotas();
+        for (Mascotas m : lista) {
+            modeloMascotas.addRow(new Object[]{
+                m.getId(),
+                m.getNombre(),
+                m.getEspecie(),
+                m.getEdad(),
+                m.getDocumentoProp()
+            });
+        }
+    }
 
-        if (lista != null) {
-            for (Mascotas m : lista) {
-                modelo.addRow(new Object[]{
-                    m.getId(),
-                    m.getNombre(),
-                    m.getEspecie(),
-                    m.getEdad(),
-                    m.getDocumentoProp()
-                });
-            }
+    public void ListarPropietario() {
+        modeloPropietarios.setRowCount(0); // Limpia la tabla
+        List<Propietario> lista = propietarioControlador.listarPropietarios();
+        for (Propietario p : lista) {
+            modeloPropietarios.addRow(new Object[]{
+                p.getNombre(),
+                p.getDocumento(),
+                p.getTelefono()
+            });
         }
     }
 
@@ -58,15 +77,45 @@ public class VentanaTablas extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tablaPacientes = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tablaPropietarios = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaMascotas = new javax.swing.JTable();
+        btnEditarProp = new javax.swing.JButton();
+        btnEliminarProp = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jSeparator2 = new javax.swing.JSeparator();
+        jSeparator3 = new javax.swing.JSeparator();
 
         setClosable(true);
         setTitle("Lista De Pacientes");
 
-        tablaPacientes.setModel(new javax.swing.table.DefaultTableModel(
+        jPanel1.setBackground(new java.awt.Color(0, 51, 51));
+
+        tablaPropietarios.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(tablaPropietarios);
+
+        jLabel3.setFont(new java.awt.Font("Sitka Heading", 1, 50)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("  Sistema Gestion Veterinaria");
+
+        tablaMascotas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -85,54 +134,262 @@ public class VentanaTablas extends javax.swing.JInternalFrame {
                 return types [columnIndex];
             }
         });
-        tablaPacientes.setColumnSelectionAllowed(true);
-        jScrollPane1.setViewportView(tablaPacientes);
-        tablaPacientes.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        tablaMascotas.setColumnSelectionAllowed(true);
+        jScrollPane1.setViewportView(tablaMascotas);
+        tablaMascotas.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+        btnEditarProp.setText("Eliminar");
+        btnEditarProp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarPropActionPerformed(evt);
             }
-        ));
-        jScrollPane2.setViewportView(jTable1);
+        });
+
+        btnEliminarProp.setText("Editar");
+        btnEliminarProp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarPropActionPerformed(evt);
+            }
+        });
+
+        jButton5.setText("Eliminar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jButton6.setText("Editar");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setFont(new java.awt.Font("Sitka Heading", 1, 24)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Gestion De Mascota");
+
+        jLabel5.setFont(new java.awt.Font("Sitka Heading", 1, 24)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Gestion De Propietario");
+
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(66, 66, 66)
+                .addComponent(btnEditarProp, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(52, 52, 52)
+                .addComponent(btnEliminarProp, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(155, 155, 155)
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(65, 65, 65)
+                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 675, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(60, 60, 60))))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(7, 7, 7)
+                                .addComponent(jLabel5)
+                                .addGap(1, 1, 1)
+                                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                            .addComponent(btnEditarProp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnEliminarProp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(62, 62, 62)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnEditarPropActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarPropActionPerformed
+    int fila = tablaPropietarios.getSelectedRow();
+       if (fila == -1) {
+           JOptionPane.showMessageDialog(this, "Seleccione un propietario para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+           return;
+       }
+
+       String documento = modeloPropietarios.getValueAt(fila, 1).toString(); // Columna 1 = Documento
+       int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de eliminar al propietario con documento " + documento + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
+
+       if (confirm == JOptionPane.YES_OPTION) {
+           boolean eliminado = propietarioControlador.eliminarPropietario(documento);
+           if (eliminado) {
+               JOptionPane.showMessageDialog(this, "Propietario eliminado correctamente.");
+               ListarPropietario(); // Refrescar tabla
+           } else {
+               JOptionPane.showMessageDialog(this, "No se pudo eliminar el propietario.", "Error", JOptionPane.ERROR_MESSAGE);
+           }
+       }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEditarPropActionPerformed
+
+    private void btnEliminarPropActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarPropActionPerformed
+    int fila = tablaPropietarios.getSelectedRow();
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Seleccione un propietario para editar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // Obtener datos actuales
+    String documento = modeloPropietarios.getValueAt(fila, 1).toString();
+    String nombreActual = modeloPropietarios.getValueAt(fila, 0).toString();
+    String telefonoActual = modeloPropietarios.getValueAt(fila, 2).toString();
+
+    // Pedir nuevos datos
+    String nuevoNombre = JOptionPane.showInputDialog(this, "Editar nombre:", nombreActual);
+    if (nuevoNombre == null || nuevoNombre.trim().isEmpty()) return;
+
+    String nuevoTelefono = JOptionPane.showInputDialog(this, "Editar teléfono:", telefonoActual);
+    if (nuevoTelefono == null || nuevoTelefono.trim().isEmpty()) return;
+
+    // Actualizar en el controlador
+    Propietario prop = new Propietario(nuevoNombre, documento, nuevoTelefono);
+    boolean actualizado = propietarioControlador.editarPropietario(prop);
+    if (actualizado) {
+        JOptionPane.showMessageDialog(this, "Propietario actualizado correctamente.");
+        ListarPropietario(); // Refrescar tabla
+    } else {
+        JOptionPane.showMessageDialog(this, "No se pudo actualizar el propietario.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnEliminarPropActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    int fila = tablaMascotas.getSelectedRow();
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Seleccione una mascota para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    int idMascota = Integer.parseInt(modeloMascotas.getValueAt(fila, 0).toString());
+    int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de eliminar la mascota con ID " + idMascota + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
+
+    if (confirm == JOptionPane.YES_OPTION) {
+        boolean eliminado = mascotaControlador.eliminarMascota(idMascota);
+        if (eliminado) {
+            JOptionPane.showMessageDialog(this, "Mascota eliminada correctamente.");
+            ListarMascota(); // Refrescar tabla
+        } else {
+            JOptionPane.showMessageDialog(this, "No se pudo eliminar la mascota.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        int fila = tablaMascotas.getSelectedRow();
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Seleccione una mascota para editar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    int id = Integer.parseInt(modeloMascotas.getValueAt(fila, 0).toString());
+    String nombreActual = modeloMascotas.getValueAt(fila, 1).toString();
+    String especieActual = modeloMascotas.getValueAt(fila, 2).toString();
+    int edadActual = Integer.parseInt(modeloMascotas.getValueAt(fila, 3).toString());
+    String docPropActual = modeloMascotas.getValueAt(fila, 4).toString();
+
+    // Pedir nuevos datos
+    String nuevoNombre = JOptionPane.showInputDialog(this, "Editar nombre:", nombreActual);
+    if (nuevoNombre == null || nuevoNombre.trim().isEmpty()) return;
+
+    String nuevaEspecie = JOptionPane.showInputDialog(this, "Editar especie:", especieActual);
+    if (nuevaEspecie == null || nuevaEspecie.trim().isEmpty()) return;
+
+    String nuevaEdadStr = JOptionPane.showInputDialog(this, "Editar edad:", edadActual);
+    int nuevaEdad = Integer.parseInt(nuevaEdadStr);
+
+    // Actualizar
+    Mascotas mascota = new Mascotas(nuevoNombre, nuevaEspecie, nuevaEdad, id);
+    mascota.setDocumentoProp(docPropActual);
+    boolean actualizado = mascotaControlador.editarMascota(mascota);
+    if (actualizado) {
+        JOptionPane.showMessageDialog(this, "Mascota actualizada correctamente.");
+        ListarMascota();
+    } else {
+        JOptionPane.showMessageDialog(this, "No se pudo actualizar la mascota.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_jButton6ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEditarProp;
+    private javax.swing.JButton btnEliminarProp;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable tablaPacientes;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JTable tablaMascotas;
+    private javax.swing.JTable tablaPropietarios;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -2,6 +2,8 @@
 package vistas;
 
  
+import controladores.ControladorMascota;
+import controladores.ControladorPropietario;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -12,16 +14,23 @@ import javax.swing.tree.DefaultTreeModel;
  */
 public class Taller_5 extends javax.swing.JFrame {
     
-    
+    private VentanaTablas ventanaTablas;
+    private ControladorMascota controladorMascotaCompartido;
+    private ControladorPropietario controladorPropietarioCompartido;
+
     
 
     
     public Taller_5() {
  
         initComponents();
-        setTitle("Clinica De Mascotas");
+        
        //setExtendedState(JFrame. MAXIMIZED_BOTH);
-        setLocationRelativeTo(null);                                           
+        setLocationRelativeTo(null);
+        controladorMascotaCompartido = new ControladorMascota();
+        controladorPropietarioCompartido = new ControladorPropietario();
+
+        ventanaTablas = null;
 
          DefaultMutableTreeNode raiz = new DefaultMutableTreeNode("Servicios");
 
@@ -104,6 +113,7 @@ public class Taller_5 extends javax.swing.JFrame {
         ArbolServicios.getAccessibleContext().setAccessibleName("");
         ArbolServicios.getAccessibleContext().setAccessibleParent(this);
 
+        jTextPane1.setEditable(false);
         jTextPane1.setText("                             \n\n                Donde la salud animal se encuentra con la tecnología\n\n\nSistema de Gestión Clínica Veterinaria\nVersión 1.0 – Proyecto Académico\n\nDesarrollado por:\nJean Pool Alejandro Tapiero Sánchez\nEstudiante de Ingeniería de Software\nEscuela de Administración y Mercadotecnia del Quindío – EAM");
         jScrollPane3.setViewportView(jTextPane1);
 
@@ -213,20 +223,68 @@ public class Taller_5 extends javax.swing.JFrame {
 
     }//GEN-LAST:event_BtnSalirActionPerformed
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        Gestion_De_Registro registro = new Gestion_De_Registro();
-        EscritorioPrincipal.add(registro);
-        registro.setVisible(true);
+        Gestion_De_Registro gestion = new Gestion_De_Registro(
+                controladorMascotaCompartido,
+                controladorPropietarioCompartido
+        );
 
+        EscritorioPrincipal.add(gestion);
+        gestion.setVisible(true);
+    
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        VentanaTablas ventanaTabla = new VentanaTablas();
-        EscritorioPrincipal.add(ventanaTabla);
-        ventanaTabla.setVisible(true);
+             mostrarVentanaTablas();
+    }
+
+    // Método para abrir o traer la VentanaTablas
+    private void mostrarVentanaTablas() {
+        try {
+            if (ventanaTablas == null || ventanaTablas.isClosed()) {
+                ventanaTablas = new VentanaTablas(
+                        controladorMascotaCompartido,
+                        controladorPropietarioCompartido
+                );
+                EscritorioPrincipal.add(ventanaTablas);
+                ventanaTablas.setVisible(true);
+            } else {
+                ventanaTablas.setIcon(false);  // por si estaba minimizada
+                ventanaTablas.toFront();
+                ventanaTablas.setSelected(true);
+            }
+
+            // Refrescar datos cada vez que se abre
+            ventanaTablas.ListarMascota();
+            ventanaTablas.ListarPropietario();
+
+        } catch (java.beans.PropertyVetoException ex) {
+            ex.printStackTrace();
+        }
+    
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
-   
-    /**
+    
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTree ArbolServicios;
+    private javax.swing.JMenuItem BtnSalir;
+    private javax.swing.JDesktopPane EscritorioPrincipal;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPasswordField jPasswordField1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextPane jTextPane1;
+    // End of variables declaration//GEN-END:variables
+
+       /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -261,23 +319,4 @@ public class Taller_5 extends javax.swing.JFrame {
         });
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTree ArbolServicios;
-    private javax.swing.JMenuItem BtnSalir;
-    private javax.swing.JDesktopPane EscritorioPrincipal;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextPane jTextPane1;
-    // End of variables declaration//GEN-END:variables
 }

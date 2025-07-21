@@ -6,6 +6,7 @@ package controladores;
 import modelo.Mascotas;
 import DAO.MascotasDAO;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -13,61 +14,42 @@ import java.util.ArrayList;
  */
 
 public class ControladorMascota {
-    private MascotasDAO dao;
+    private MascotasDAO daoMascota;
 
     public ControladorMascota() {
-        this.dao = new MascotasDAO();
+        daoMascota = new MascotasDAO();
     }
 
     public boolean guardarMascota(Mascotas mascota) {
-    if (mascota == null || mascota.getNombre() == null || mascota.getEspecie() == null || mascota.getId() < 5 || mascota.getEdad() < 0) {
-        return false;
-    }
-
-    return dao.guardarMascota(mascota); // Llama al método del DAO
-}
-
-
-    public Mascotas buscarMascota(int id ) {
-        if (id < 5 ) {
-            return null;
-        }
-        return dao.buscarMascota(id);
-    }
-
-    public boolean editarMascota(int id, String nuevoNombre, String nuevaEspecie, int nuevaEdad) {
-        if ((id < 5 ) ||
-            (nuevoNombre == null || nuevoNombre.isBlank()) ||
-            (nuevaEspecie == null || nuevaEspecie.isBlank()) ||
-            (nuevaEdad < 0)) {
+        if (mascota == null) {
             return false;
         }
-        
-        Mascotas actualizada = new Mascotas(nuevoNombre, nuevaEspecie, nuevaEdad, id);
-        return dao.actualizarMascota(actualizada);
+        return daoMascota.agregarMascota(mascota);
     }
 
-//        public boolean eliminarMascota(Mascotas mascota) {
-//        if (mascota.getId()<0 ) {
-//            return false;
-//        }
-//
-//        Mascotas m = dao.buscarMascota(mascota);
-//        if (m != null) {
-//            return dao.eliminarMascota(m);
-//        }
-//        return false;
-//    }
-    
-    public ArrayList<Mascotas> buscarPorDocumentoPropietario(String documento) {
-    if (documento != null && !documento.equals("")) {
-        return dao.buscarUsandoPropietario(documento);
+    public List<Mascotas> listarMascotas() {
+        return daoMascota.obtenerMascotas();
     }
-    return new ArrayList<>();
-}
-    
-    public ArrayList<Mascotas> obtenerTodasMascotas(){
-        return dao.getMascotas();
-    }
-}
 
+    public Mascotas buscarMascotaPorId(int id) {
+        return daoMascota.buscarPorId(id);
+    }
+
+    public boolean eliminarMascota(int id) {
+        return daoMascota.eliminarMascota(id);
+    }
+    
+
+   private List<Mascotas> listaMascotas = new ArrayList<>(); // Lista principal
+
+    public boolean editarMascota(Mascotas mascotaEditada) {
+        for (int i = 0; i < listaMascotas.size(); i++) {
+            Mascotas m = listaMascotas.get(i);
+            if (m.getId() == mascotaEditada.getId()) {
+                listaMascotas.set(i, mascotaEditada);  // Actualiza directamente la lista
+                return true;
+            }
+        }
+        return false;
+    }
+}
